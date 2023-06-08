@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using PRzHealthcareAPIRefactor.Exceptions;
 using PRzHealthcareAPIRefactor.Helpers;
 using PRzHealthcareAPIRefactor.Models;
@@ -10,6 +11,7 @@ namespace PRzHealthcareAPIRefactor.Services
     public interface IEventService
     {
         void TakeTerm(EventDto dto, string accountId);
+        void FinishTerm(EventDto dto, string accountId);
         bool SeedDates(int doctorId);
     }
 
@@ -18,12 +20,14 @@ namespace PRzHealthcareAPIRefactor.Services
         private readonly HealthcareDbContext _dbContext;
         private readonly AuthenticationSettings _authentication;
         private readonly IMapper _mapper;
+        private readonly ICertificateService _certificateService;
 
-        public EventService(HealthcareDbContext dbContext, AuthenticationSettings authentication, IMapper mapper)
+        public EventService(HealthcareDbContext dbContext, AuthenticationSettings authentication, IMapper mapper, ICertificateService certificateService)
         {
             _dbContext = dbContext;
             _authentication = authentication;
             _mapper = mapper;
+            _certificateService = certificateService;
         }
 
         /// <summary>
@@ -86,9 +90,38 @@ namespace PRzHealthcareAPIRefactor.Services
             changedEvent.Eve_InsertedDate = DateTime.Now;
             changedEvent.Eve_InsertedAccId = Convert.ToInt32(accountId);
 
+
             _dbContext.Update(changedEvent);
             _dbContext.SaveChanges();
 
+        }
+
+        /// <summary>
+        /// Zakończenie terminu
+        /// </summary>
+        /// <param name="dto">Obiekt terminu</param>
+        /// <param name="accountId">Id zalogowanego użytkownika</param>
+        public void FinishTerm(EventDto dto, string accountId)
+        {
+            var finishEventTypeId = _dbContext.EventTypes.FirstOrDefault(x => x.Ety_Name == "Zakończony").Ety_Id;
+            var finishedEvent = _dbContext.Events.FirstOrDefault(x => x.Eve_Id == dto.Id);
+            if (finishedEvent == null)
+            {
+                throw new NotFoundException("Wydarzenie nie istnieje.");
+            }
+            var user = _dbContext.Accounts.FirstOrDefault(x => x.Acc_Id == dto.AccId);
+            if (user == null)
+            {
+                throw new NotFoundException("Nie znaleziono użytkownika.");
+            }
+
+            finishedEvent.Eve_Type = finishEventTypeId;
+            finishedEvent.Eve_ModifiedAccId = Convert.ToInt32(accountId);
+            finishedEvent.Eve_ModifiedDate = DateTime.Now;
+            finishedEvent.Eve_SerialNumber = Tools.CreateRandomToken(5);
+
+            _dbContext.Update(finishedEvent);
+            _dbContext.SaveChanges();
         }
 
         /// <summary>

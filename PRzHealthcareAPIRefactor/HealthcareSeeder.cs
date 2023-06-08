@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PRzHealthcareAPIRefactor.Helpers;
 using PRzHealthcareAPIRefactor.Models;
 
 namespace PRzHealthcareAPIRefactor
@@ -47,6 +48,12 @@ namespace PRzHealthcareAPIRefactor
                 {
                     var vaccinations = GetVaccinations();
                     _dbContext.Vaccinations.AddRange(vaccinations);
+                    _dbContext.SaveChanges();
+                }
+                if (!_dbContext.BinData.Any())
+                {
+                    var certificate = GetCertificate();
+                    _dbContext.BinData.AddRange(certificate);
                     _dbContext.SaveChanges();
                 }
             }
@@ -267,6 +274,22 @@ namespace PRzHealthcareAPIRefactor
                 },
             };
             return eventTypes;
+        }
+        private IEnumerable<BinData> GetCertificate()
+        {
+            var certificates = new List<BinData>()
+            {
+                new BinData()
+                {
+                    Bin_InsertedAccId = 1,
+                    Bin_InsertedDate = DateTime.Now,
+                     Bin_ModifiedAccId = 1,
+                     Bin_ModifiedDate= DateTime.Now,
+                     Bin_Name = "Certyfikat szczepienia COVID"
+                }
+            };
+            certificates[0].Bin_Data = Tools.ToBase64Converter($@"D:\Studia\ProjektInzynierski\1.0\assets\ZaswiadczenieCOVID.rdl");
+            return certificates;
         }
     }
 }

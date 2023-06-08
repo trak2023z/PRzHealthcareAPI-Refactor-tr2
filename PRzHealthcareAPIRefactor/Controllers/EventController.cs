@@ -26,16 +26,31 @@ namespace PRzHealthcareAPIRefactor.Controllers
             return Ok();
         }
 
+        [AllowAnonymous]
         [HttpPatch("takeeventterm")]
         public ActionResult TakeTerm([FromBody] EventDto dto)
         {
-            string accountId = "";
-            if (HttpContext.User.Identity is ClaimsIdentity identity)
-            {
-                accountId = identity.FindFirst(ClaimTypes.SerialNumber).Value;
-            }
+            string accountId = "2";
+            //if (HttpContext.User.Identity is ClaimsIdentity identity)
+            //{
+            //    accountId = identity.FindFirst(ClaimTypes.SerialNumber).Value;
+            //}
 
             _eventService.TakeTerm(dto, accountId);
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPatch("finishterm")]
+        public ActionResult FinishTerm([FromBody] EventDto dto)
+        {
+            string accountId = "2";
+            //if (HttpContext.User.Identity is ClaimsIdentity identity)
+            //{
+            //    accountId = identity.FindFirst(ClaimTypes.SerialNumber).Value;
+            //}
+
+            _eventService.FinishTerm(dto, accountId);
             return Ok();
         }
 

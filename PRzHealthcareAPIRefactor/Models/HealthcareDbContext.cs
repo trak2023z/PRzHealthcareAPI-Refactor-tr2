@@ -17,6 +17,7 @@ namespace PRzHealthcareAPIRefactor.Models
         public DbSet<EventType> EventTypes { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Vaccination> Vaccinations { get; set; }
+        public DbSet<BinData> BinData { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -65,6 +66,13 @@ namespace PRzHealthcareAPIRefactor.Models
             modelBuilder.Entity<EventType>().HasKey(x => x.Ety_Id);
             modelBuilder.Entity<EventType>().Property(x => x.Ety_Name).IsRequired().HasMaxLength(127);
 
+            modelBuilder.Entity<BinData>().HasKey(x => x.Bin_Id);
+            modelBuilder.Entity<BinData>().Property(x => x.Bin_Name).IsRequired().HasMaxLength(255);
+            modelBuilder.Entity<BinData>().Property(x => x.Bin_Data).IsRequired();
+            modelBuilder.Entity<BinData>().Property(x => x.Bin_ModifiedAccId).IsRequired();
+            modelBuilder.Entity<BinData>().Property(x => x.Bin_ModifiedDate).IsRequired().HasColumnType("datetime");
+            modelBuilder.Entity<BinData>().Property(x => x.Bin_InsertedDate).IsRequired().HasColumnType("datetime");
+            modelBuilder.Entity<BinData>().Property(x => x.Bin_InsertedAccId).IsRequired();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
