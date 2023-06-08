@@ -37,6 +37,18 @@ namespace PRzHealthcareAPIRefactor
                     _dbContext.Accounts.AddRange(accounts);
                     _dbContext.SaveChanges();
                 }
+                if (!_dbContext.EventTypes.Any())
+                {
+                    var eventTypes = GetEventTypes();
+                    _dbContext.EventTypes.AddRange(eventTypes);
+                    _dbContext.SaveChanges();
+                }
+                if (!_dbContext.Vaccinations.Any())
+                {
+                    var vaccinations = GetVaccinations();
+                    _dbContext.Vaccinations.AddRange(vaccinations);
+                    _dbContext.SaveChanges();
+                }
 
             }
         }
@@ -189,6 +201,73 @@ namespace PRzHealthcareAPIRefactor
             };
 
             return accountTypes;
+        }
+        private IEnumerable<Vaccination> GetVaccinations()
+        {
+            var administratorId = _dbContext.Accounts.FirstOrDefault(x => x.Acc_Login == "Administrator").Acc_Id;
+            var vaccinations = new List<Vaccination>()
+            {
+                new Vaccination()
+                {
+                   Vac_Name = "Comirnaty",
+                   Vac_Description = @"Szczepionka została dopuszczona do obrotu w całej Unii Europejskiej w procedurze warunkowego dopuszczenia do obrotu (decyzja Komisji Europejskiej z 21.12.2020). Szczepionka chroni przed objawami COVID-19 wywołanymi przez koronawirusa SARS-CoV-2.  Może być podawana osobom w wieku >6 miesięcy. Szczegółowe zalecenia dotyczące stosowania szczepionki przedstawione są w Charakterystyce Produktu Leczniczego oraz ulotce dla pacjenta dołączonej do opakowania szczepionki.",
+                   Vac_PhotoId = null,
+                   Vac_DaysBetweenVacs = 12,
+                   Vac_IsActive = true,
+                   Vac_InsertedDate = DateTime.Now,
+                   Vac_InsertedAccId = administratorId,
+                   Vac_ModifiedDate = DateTime.Now,
+                   Vac_ModifiedAccId = administratorId
+                },
+                new Vaccination()
+                {
+                   Vac_Name = "Spikevax",
+                   Vac_Description = @"Szczepionka została dopuszczona do obrotu w całej Unii Europejskiej w procedurze warunkowego dopuszczenia do obrotu (decyzja Komisji Europejskiej z 06.01.2021). Szczepionka chroni przed objawami COVID-19 wywołanymi przez koronawirusa SARS-CoV-2. Może być podawana osobom w wieku ≥6 lat. Szczegółowe zalecenia dotyczące stosowania szczepionki przedstawione są w Charakterystyce Produktu Leczniczego oraz Ulotce dla pacjenta.",
+                   Vac_PhotoId = null,
+                   Vac_DaysBetweenVacs = 12,
+                   Vac_IsActive = true,
+                   Vac_InsertedDate = DateTime.Now,
+                   Vac_InsertedAccId = administratorId,
+                   Vac_ModifiedDate = DateTime.Now,
+                   Vac_ModifiedAccId = administratorId
+                },
+                new Vaccination()
+                {
+                   Vac_Name = "Vaxzevria",
+                   Vac_Description = @"Szczepionka została dopuszczona do obrotu w całej Unii Europejskiej w procedurze warunkowego dopuszczenia do obrotu (decyzja Komisji Europejskiej z 29.01.2021). Szczepionka chroni przed objawami COVID-19 wywołanymi przez koronawirusa SARS-CoV-2. Może być podawana osobom w wieku ≥18 lat, w postaci dwóch dawek. Szczegółowe zalecenia dotyczące stosowania szczepionki przedstawione są w Charakterystyce Produktu Leczniczego oraz Ulotce dla pacjenta (szczepionka obecnie w Polsce niedostępna).",
+                   Vac_PhotoId = null,
+                   Vac_DaysBetweenVacs = 12,
+                   Vac_IsActive = true,
+                   Vac_InsertedDate = DateTime.Now,
+                   Vac_InsertedAccId = administratorId,
+                   Vac_ModifiedDate = DateTime.Now,
+                   Vac_ModifiedAccId = administratorId
+                },
+            };
+            return vaccinations;
+        }
+        private IEnumerable<EventType> GetEventTypes()
+        {
+            var eventTypes = new List<EventType>()
+            {
+                new EventType()
+                {
+                    Ety_Name = "Wolny",
+                },
+                new EventType()
+                {
+                    Ety_Name = "Zajęty",
+                },
+                new EventType()
+                {
+                    Ety_Name = "Nieobecność",
+                },
+                new EventType()
+                {
+                    Ety_Name = "Zakończony",
+                },
+            };
+            return eventTypes;
         }
     }
 }
