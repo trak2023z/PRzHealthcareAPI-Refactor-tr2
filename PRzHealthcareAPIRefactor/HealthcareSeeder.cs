@@ -49,7 +49,6 @@ namespace PRzHealthcareAPIRefactor
                     _dbContext.Vaccinations.AddRange(vaccinations);
                     _dbContext.SaveChanges();
                 }
-
             }
         }
         private IEnumerable<Account> GetAccounts()

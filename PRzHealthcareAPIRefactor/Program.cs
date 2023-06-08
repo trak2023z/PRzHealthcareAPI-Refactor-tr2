@@ -23,6 +23,7 @@ configuration.GetSection("Authentication").Bind(authenticationSettings);
 
 // Add services to the container.
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddDbContext<HealthcareDbContext>();
 builder.Services.AddScoped<RequestTimeMiddleware>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
