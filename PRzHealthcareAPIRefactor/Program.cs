@@ -25,6 +25,8 @@ configuration.GetSection("Authentication").Bind(authenticationSettings);
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
+builder.Services.AddScoped<IVaccinationService, VaccinationService>();
+
 builder.Services.AddDbContext<HealthcareDbContext>();
 builder.Services.AddScoped<RequestTimeMiddleware>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();

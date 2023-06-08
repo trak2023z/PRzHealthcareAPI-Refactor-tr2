@@ -16,6 +16,8 @@ namespace PRzHealthcareAPIRefactor.Services
     {
         void Register(RegisterUserDto dto);
         LoginUserDto? GenerateToken(LoginUserDto dto);
+        List<UserDto> GetDoctorsList();
+        List<UserDto> GetPatientsList();
     }
 
     public class UserService : IUserService
@@ -118,6 +120,51 @@ namespace PRzHealthcareAPIRefactor.Services
             };
 
             return loginUser;
+        }
+
+        /// <summary>
+        /// Pobranie listy doktorów
+        /// </summary>
+        /// <returns>Lista doktorów</returns>
+        public List<UserDto> GetDoctorsList()
+        {
+            var doctorAccountTypeId = _dbContext.AccountTypes.FirstOrDefault(x => x.Aty_Name == "Doktor").Aty_Id;
+            var list = _dbContext.Accounts.Where(x => x.Acc_AtyId == doctorAccountTypeId && x.Acc_IsActive).ToList();
+            if (list is null)
+            {
+                return new List<UserDto>();
+            }
+
+            List<UserDto> listUserDto = new();
+
+            foreach (var account in list)
+            {
+                listUserDto.Add(_mapper.Map<UserDto>(account));
+            }
+
+            return listUserDto;
+        }
+        /// <summary>
+        /// Pobranie listy pacjentów
+        /// </summary>
+        /// <returns>Lista obiektów pacjentów</returns>
+        public List<UserDto> GetPatientsList()
+        {
+            var patientAccountTypeId = _dbContext.AccountTypes.FirstOrDefault(x => x.Aty_Name == "Pacjent").Aty_Id;
+            var list = _dbContext.Accounts.Where(x => x.Acc_AtyId == patientAccountTypeId && x.Acc_IsActive).ToList();
+            if (list is null)
+            {
+                return new List<UserDto>();
+            }
+
+            List<UserDto> listUserDto = new();
+
+            foreach (var account in list)
+            {
+                listUserDto.Add(_mapper.Map<UserDto>(account));
+            }
+
+            return listUserDto;
         }
     }
 }

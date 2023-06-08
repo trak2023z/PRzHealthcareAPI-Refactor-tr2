@@ -33,5 +33,17 @@ namespace PRzHealthcareAPIRefactor.Controllers
             var loggedUser = _userService.GenerateToken(dto);
             return Ok(loggedUser);
         }
+        [HttpGet("getdoctorslist")]
+        public ActionResult GetDoctorsList()
+        {
+            var doctors = _userService.GetDoctorsList();
+            return Ok(doctors);
+        }
+        [HttpGet("getpatientslist")]
+        public ActionResult GetPatientsList()
+        {
+            var patients = _userService.GetPatientsList();
+            return Ok(patients);
+        }
     }
 }

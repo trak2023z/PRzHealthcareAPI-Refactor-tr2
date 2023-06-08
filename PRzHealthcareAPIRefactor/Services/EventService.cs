@@ -13,6 +13,8 @@ namespace PRzHealthcareAPIRefactor.Services
         void TakeTerm(EventDto dto, string accountId);
         void FinishTerm(EventDto dto, string accountId);
         bool SeedDates(int doctorId);
+        List<EventDto> GetNurseEvents();
+        EventDto GetSelectedEvent(int eventId);
     }
 
     public class EventService : IEventService
@@ -123,6 +125,56 @@ namespace PRzHealthcareAPIRefactor.Services
             _dbContext.Update(finishedEvent);
             _dbContext.SaveChanges();
         }
+
+        /// <summary>
+        /// Pobranie listy terminów dla pielęgniarki
+        /// </summary>
+        /// <returns>Lista terminów dla pielęgniarki</returns>
+        public List<EventDto> GetNurseEvents()
+        {
+            var busyEventTypeId = _dbContext.EventTypes.FirstOrDefault(x => x.Ety_Name == "Zajęty").Ety_Id;
+            var awayEventTypeId = _dbContext.EventTypes.FirstOrDefault(x => x.Ety_Name == "Nieobecność").Ety_Id;
+            var finishedEventTypeId = _dbContext.EventTypes.FirstOrDefault(x => x.Ety_Name == "Zakończony").Ety_Id;
+            var events = _dbContext.Events.Where(x => (x.Eve_Type == busyEventTypeId || x.Eve_Type == awayEventTypeId || x.Eve_Type == finishedEventTypeId)).ToList();
+
+            List<EventDto> eventDtos = new List<EventDto>();
+
+            foreach (var ev in events)
+            {
+                var eventDto = _mapper.Map<EventDto>(ev);
+
+                eventDto.DateFrom = Convert.ToDateTime(eventDto.TimeFrom);
+                eventDto.DateTo = Convert.ToDateTime(eventDto.TimeTo);
+                eventDto.TimeFrom = Convert.ToDateTime(eventDto.TimeFrom).ToString("MM.dd.yyyy HH:mm");
+                eventDto.TimeTo = Convert.ToDateTime(eventDto.TimeTo).ToString("MM.dd.yyyy HH:mm");
+                eventDtos.Add(eventDto);
+            }
+            return eventDtos;
+
+        }
+        /// <summary>
+        /// Pobranie szczegółów wybranego terminu
+        /// </summary>
+        /// <param name="eventId">Id terminu</param>
+        /// <returns>Szczegóły terminu</returns>
+        /// <exception cref="NotFoundException">Brak wydarzenia</exception>
+        public EventDto GetSelectedEvent(int eventId)
+        {
+            var selectedEvent = _dbContext.Events.FirstOrDefault(x => x.Eve_Id == eventId);
+            if (selectedEvent == null)
+            {
+                throw new NotFoundException("Nie znaleziono odpowiedniego wydarzenia.");
+            }
+
+            var eventDto = _mapper.Map<EventDto>(selectedEvent);
+
+            eventDto.DateFrom = Convert.ToDateTime(eventDto.TimeFrom);
+            eventDto.DateTo = Convert.ToDateTime(eventDto.TimeTo);
+
+            return eventDto;
+
+        }
+
 
         /// <summary>
         /// Zapełnienie wolnych terminów
